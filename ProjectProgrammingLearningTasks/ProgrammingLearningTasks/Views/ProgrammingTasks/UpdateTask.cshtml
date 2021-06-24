@@ -1,0 +1,23 @@
+﻿@model ProgrammingLearningTasks.Models.ProgrammingTasks.AddTopicViewModel
+
+
+<div class="container bg-light p-2 border rounded-3" style="word-wrap:break-word">
+    <div class="text-center">
+        <h3>Изменить задачу</h3>
+    </div>
+    <form asp-action="AddTopic">
+        <div class="form-group">
+            <label asp-for="Name">Название</label>
+            <input type="text" asp-for="Name" class="form-control"/>
+        </div>
+        <br/>
+        <div class="form-group">
+            <label asp-for="ParentName">Укажите родительскую тему при необходимости</label>
+            <input type="text" asp-for="ParentName" class="form-control"/>
+        </div>
+        <br/>
+        <div class="form-group">
+            <input type="submit" value="Добавить" class="form-control btn-primary"/>
+        </div>
+    </form>
+</div>

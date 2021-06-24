@@ -1,0 +1,58 @@
+﻿@model ProgrammingLearningTasks.Models.ProgrammingTasks.UpdateSolutionViewModel
+
+
+<div class="container bg-light p-2 border rounded-3" style="word-wrap:break-word">
+    <div class="text-center">
+        <h3>Изменение решения</h3>
+    </div>
+    <form asp-action="EditSolution">
+        <div class="form-group">
+            <h5 class="fw-bold">Язык</h5>
+            <input type="text" asp-for="LangName" class="form-control"/>
+        </div>
+        <br/>
+        <div class="form-group">
+            <h5 class="fw-bold">Описание</h5>
+            <textarea asp-for="Text" style="height: 150px !important;" class="form-control"></textarea>
+        </div>
+        <br/>
+        <div class="form-group">
+            <h5 class="fw-bold">Код решения</h5>
+            <textarea asp-for="Code" style="height: 250px !important;" class="form-control"></textarea>
+        </div>
+        <br/>
+        <div class="form-group">
+            <input type="submit" value="Обновить" class="form-control btn-outline-info"/>
+        </div>
+        <br/>
+        <div class="form-group">
+            <a href="@Url.Action("DeleteSolution", new {Model.Id, Model.TaskId})" class="form-control bgDanger text-center" role="button">Удалить</a>
+        </div>
+        <input hidden asp-for="TaskId" value="@Model.TaskId"/>
+    </form>
+</div>
+
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            
+            $("#LangName").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '@Url.Action("GetProgrammingLanguagesLikeQuery")',
+                        data: { "request": request.term },                
+                        dataType: "json",
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return item;
+                            }))
+                        }
+                    });
+                },
+                minLength: 1
+            });
+        });
+    </script>
+}

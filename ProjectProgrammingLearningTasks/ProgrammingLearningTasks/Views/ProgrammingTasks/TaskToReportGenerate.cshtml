@@ -1,0 +1,96 @@
+﻿@model ProgrammingLearningTasks.Models.ProgrammingTasks.TaskReportViewModel
+
+<div class="container bg-light p-2 border rounded-3">
+    <div class="text-center">
+        <h3>@Model.Id - @Model.Name</h3>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col text-start">
+            <span>@Model.Author</span>
+        </div>
+        <div class="col text-center">
+            <span>Сложность - @Model.Complexity</span>
+        </div>
+        <div class="col text-end">
+            <span>@Model.CreationDate</span>
+        </div>
+    </div>
+    <hr/>
+    <br/>
+    <div class="text-left">
+        <h5 class="fw-bold">Задача</h5>
+    </div>
+    <div>
+        <div class="mt-2">
+            @Html.Raw(Model.Text.Replace(Environment.NewLine, "<br />"))
+        </div>
+    </div>
+
+    @if (Model.InputDataText != null)
+    {
+        <br/>
+        <div class="text-left">
+            <h5 class="fw-bold">Входные данные</h5>
+            @Html.Raw(Model.InputDataText.Replace(Environment.NewLine, "<br />"))
+        </div>
+    }
+    @if (Model.OutputDataText != null)
+    {
+        <br/>
+        <div class="text-left">
+            <h5 class="fw-bold">Выходные данные</h5>
+            @Html.Raw(Model.OutputDataText.Replace(Environment.NewLine, "<br />"))
+        </div>
+    }
+    @if (Model.Comment != null)
+    {
+        <br/>
+        <div class="text-left">
+            <h5 class="fw-bold">Комментарий</h5>
+            <p id="Comment">
+                @Model.Comment
+            </p>
+        </div>
+    }
+    @if (Model.TestValues.Any())
+    {
+        <br/>
+        <div class="text-left">
+            <h5 class="fw-bold">Примеры</h5>
+            <br/>
+            <table class="table">
+                <tr>
+                    <th>INPUT.TXT</th>
+                    <th>OUTPUT.TXT</th>
+                </tr>
+                @foreach (var testValue in Model.TestValues)
+                {
+                    <tr>
+                        <td>
+                            @testValue.Input
+                        </td>
+                        <td>
+                            @testValue.Output
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+    @if (Model.NestedFiles.Any() && Model.NestedFiles != null)
+    {
+        <br/>
+        <div class="text-left">
+            <h5 class="fw-bold">Вложенные файлы</h5>
+        </div>
+        <div class="list-group">
+            @foreach (var nestedFile in Model.NestedFiles)
+            {
+                <div class="list-group-item">
+                    <a class="nav-link active" href="@nestedFile.Url">@nestedFile.FileNameWithExtension</a>
+                </div>
+            }
+        </div>
+    }
+</div>

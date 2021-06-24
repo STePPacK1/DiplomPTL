@@ -1,0 +1,95 @@
+﻿@model ProgrammingLearningTasks.Models.ProgrammingTasks.AddTaskViewModel
+
+
+<div class="container bg-light p-2 border rounded-3" style="word-wrap:break-word">
+    <div class="text-center">
+        <h3>Создать новую задачу</h3>
+    </div>
+    <form asp-action="AddTask">
+        <div class="form-group">
+            <h5 class="fw-bold">Название</h5>
+            <input type="text" asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <br/>
+        <div class="form-group">
+            <h5 class="fw-bold">Тема</h5>
+            <input type="text" asp-for="TopicName" class="form-control"/>
+            <span asp-validation-for="TopicName" class="text-danger"></span>
+        </div>
+        <br/>
+        <div class="form-group">
+            <h5 class="fw-bold">Сложность (цифра)</h5>
+            <input type="text" asp-for="Complexity" class="form-control"/>
+        </div>
+        <br/>
+        <div class="form-group">
+            <h5 class="fw-bold">Текст задачи</h5>
+            <textarea asp-for="Text" style="height: 250px !important;" class="form-control"></textarea>
+        </div>
+        <br/>
+        <div class="form-group">
+            <h5 class="fw-bold">Комментарий</h5>
+            <textarea asp-for="Comment" style="height: 150px !important;" class="form-control"></textarea>
+        </div>
+        <br/>
+        <div class="form-group">
+            <h5 class="fw-bold">Входные данные</h5>
+            <textarea asp-for="InputDataText" style="height: 150px !important;" class="form-control"></textarea>
+        </div>
+        <br/>
+        <div class="form-group">
+            <h5 class="fw-bold">Выходные данные</h5>
+            <textarea asp-for="OutputDataText" style="height: 150px !important;" class="form-control"></textarea>
+        </div>
+        <br/>
+        <div class="text-left">
+            <h5 class="fw-bold">Примеры</h5>
+            <div class="row">
+                <div id="TestValuesBlock" class="col-12">
+                    <div id="inputFormRow">
+                        <div class="input-group row p-2 mb-2" id="InputFormRowBlock">
+                            <input type="text" id="TestValues[0].Input" name="TestValues[0].Input" class="form-control m-input col m-1" placeholder="Входные данные" autocomplete="off">
+                            <input type="text" id="TestValues[0].Output" name="TestValues[0].Output" class="form-control m-input col m-1" placeholder="Выходные данные" autocomplete="off">
+                            <div class="input-group-append col-1">
+                                <button id="removeRow" type="button" class="btn bgDanger m-1">Удалить</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="newRow"></div>
+                    <button id="addRow" type="button" class="btn bDarkGreen form-control">Добавить строку</button>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <br/>
+        <div class="form-group">
+            <input type="submit" value="Создать задачу" class="form-control btn-primary"/>
+        </div>
+    </form>
+</div>
+
+
+@section Scripts
+{
+    <script>   
+        $(document).ready(function () {
+            
+            $("#TopicName").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '@Url.Action("GetTopicNamesLikeQuery")',
+                        data: { "request": request.term },                
+                        dataType: "json",
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return item;
+                            }))
+                        }
+                    });
+                },
+                minLength: 2
+            });
+        });
+    </script>
+}

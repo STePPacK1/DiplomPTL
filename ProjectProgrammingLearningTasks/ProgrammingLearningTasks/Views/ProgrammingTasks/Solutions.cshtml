@@ -1,0 +1,42 @@
+﻿@model ProgrammingLearningTasks.Models.ProgrammingTasks.SolutionViewContainer
+
+<div class="container bg-light p-2 border rounded-3" style="word-wrap:break-word">
+    <div class="text-center">
+        <h3>Решение к задаче - @Model.TaskName</h3>
+        <a class="nav-link active" href="@Url.Action("Task", new {id = Model.TaskId})">перейти к задаче</a>
+    </div>
+    @foreach (var solution in Model.SolutionViewModels)
+    {
+        <div class="m-3 p-2 border rounded">
+            <h4>
+                @solution.LangName
+            </h4>
+            <hr/>
+            <p>
+                @solution.Text
+            </p>
+            <br/>
+            <pre class="brush: js">
+                @solution.Code
+            </pre>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="form-group">
+                    <a href="@Url.Action("EditSolution", new {solution.Id, Model.TaskId})" class="form-control btn-outline-primary text-center" role="button">Изменить решение</a>
+                </div>
+            }
+        </div>
+    }
+    @if (User.Identity.IsAuthenticated)
+    {
+        <br/>
+        <div class="form-group">
+            <a href="@Url.Action("AddSolution", new {Model.TaskId})" class="form-control btn-primary text-decoration-none text-center" role="button">Добавить новое решение</a>
+        </div>
+    }
+</div>
+
+@section Scripts
+{
+    <script type='text/javascript'>SyntaxHighlighter.all();</script>
+}

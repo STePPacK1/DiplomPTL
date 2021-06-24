@@ -1,0 +1,76 @@
+﻿@model ProgrammingLearningTasks.Models.Identity.UserViewModel
+
+<div class="container bg-light p-2 border rounded-3">
+    <div class="text-center">
+        <h3>Личный кабинет</h3>
+    </div>
+    <div>
+        <div class="form-group">
+            <label asp-for="FullName">ФИО</label>
+            <input type="text" asp-for="FullName" class="form-control" disabled/>
+        </div>
+        <br/>
+        <div class="form-group">
+            <label asp-for="Position">Должность</label>
+            <input type="text" asp-for="Position" class="form-control" disabled/>
+        </div>
+    </div>
+    <hr/>
+    <br/>
+    <form asp-action="ChangePassword">
+        <div class="text-left">
+            <h5 class="fw-bold">Смена пароля</h5>
+        </div>
+        <br/>
+        <div class="form-group">
+            <label asp-for="ChangePasswordConfirm">Введите ваш пароль</label>
+            <input type="password" asp-for="ChangePasswordConfirm" class="form-control"/>
+            <span asp-validation-for="ChangePasswordConfirm" class="text-danger"></span>
+        </div>
+        <br/>
+        <div class="form-group">
+            <label asp-for="ChangePasswordNew">Введите новый пароль</label>
+            <input type="password" asp-for="ChangePasswordNew" class="form-control"/>
+            <span asp-validation-for="ChangePasswordNew" class="text-danger"></span>
+        </div>
+        <br/>
+        <div class="form-group">
+            <input type="submit" value="Сменить пароль" class="form-control btn bg-myHeaderBg"/>
+        </div>
+    </form>
+    <hr/>
+    <br/>
+    <form asp-action="NewUser">
+        <div class="text-left">
+            <h5 class="fw-bold">Добавление нового пользователя</h5>
+        </div>
+        <br/>
+        <div class="form-group">
+            <label asp-for="NewUserFullName">ФИО</label>
+            <input type="text" asp-for="NewUserFullName" class="form-control"/>
+            <span asp-validation-for="NewUserFullName" class="text-danger"></span>
+        </div>
+        <br/>
+        <div class="form-group">
+            <label asp-for="NewUserPosition">Должность</label>
+            <input type="text" asp-for="NewUserPosition" class="form-control"/>
+            <span asp-validation-for="NewUserPosition" class="text-danger"></span>
+        </div>
+        <br/>
+        <div class="form-group">
+            <label asp-for="NewUserLogin">Логин</label>
+            <input type="text" asp-for="NewUserLogin" class="form-control"/>
+            <span asp-validation-for="NewUserLogin" class="text-danger"></span>
+        </div>
+        <br/>
+        <div class="form-group">
+            <label asp-for="NewUserPassword">Пароль</label>
+            <input type="password" asp-for="NewUserPassword" class="form-control"/>
+            <span asp-validation-for="NewUserPassword" class="text-danger"></span>
+        </div>
+        <br/>
+        <div class="form-group">
+            <input type="submit" value="Создать нового пользователя" class="form-control btn bg-myHeaderBg"/>
+        </div>
+    </form>
+</div>

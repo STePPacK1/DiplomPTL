@@ -1,0 +1,219 @@
+﻿@model ProgrammingLearningTasks.Models.ProgrammingTasks.EditTaskViewModel
+
+<div class="container bg-light p-2 border rounded-3" style="word-wrap:break-word">
+    <a href="@Url.Action("Task", new {id = Model.Id})" class="col">Перейти к задаче</a>
+    <br/>
+    <form asp-action="EditTask">
+        <div class="form-group">
+            <h5 class="fw-bold">Название</h5>
+            <input type="text" asp-for="Name" class="form-control"/>
+        </div>
+        <br/>
+        <div class="form-group">
+            <h5 class="fw-bold">Тема</h5>
+            <input type="text" asp-for="TopicName" class="form-control"/>
+            <span asp-validation-for="TopicName" class="text-danger"></span>
+        </div>
+        <br/>
+        <div class="form-group">
+            <h5 class="fw-bold">Сложность (цифра)</h5>
+            <input type="text" asp-for="Complexity" class="form-control"/>
+        </div>
+        <br/>
+        <div class="form-group">
+            <h5 class="fw-bold">Текст задачи</h5>
+            <textarea asp-for="Text" style="height: 250px !important;" class="form-control"></textarea>
+        </div>
+        <br/>
+        <div class="form-group">
+            <h5 class="fw-bold">Комментарий</h5>
+            <textarea asp-for="Comment" style="height: 150px !important;" class="form-control"></textarea>
+        </div>
+        <br/>
+        <div class="form-group">
+            <h5 class="fw-bold">Входные данные</h5>
+            <textarea asp-for="InputDataText" style="height: 150px !important;" class="form-control"></textarea>
+        </div>
+        <br/>
+        <div class="form-group">
+            <h5 class="fw-bold">Выходные данные</h5>
+            <textarea asp-for="OutputDataText" style="height: 150px !important;" class="form-control"></textarea>
+        </div>
+        <br/>
+        <div class="text-left">
+            <h5 class="fw-bold">Примеры</h5>
+            <div class="row">
+                <div id="TestValuesBlock" class="col-12">
+                    @if (Model.TestValues.Any())
+                    {
+                        @foreach (var (value, index) in Model.TestValues.Select((value, index) => (value, index)))
+                        {
+                            <div id="inputFormRow">
+                                <div class="input-group row p-2 mb-2" id="InputFormRowBlock">
+                                    <input value="@value.Input" type="text" id="TestValues[@index].Input" name="TestValues[@index].Input" class="form-control m-input col m-1" placeholder="Входные данные" autocomplete="off">
+                                    <input value="@value.Output" type="text" id="TestValues[@index].Output" name="TestValues[@index].Output" class="form-control m-input col m-1" placeholder="Выходные данные" autocomplete="off">
+                                    <div class="input-group-append col-1">
+                                        <button id="removeRow" type="button" class="btn bgDanger m-1">Удалить</button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div id="inputFormRow">
+                            <div class="input-group row p-2 mb-2" id="InputFormRowBlock">
+                                <input type="text" id="TestValues[0].Input" name="TestValues[0].Input" class="form-control m-input col m-1" placeholder="Входные данные" autocomplete="off">
+                                <input type="text" id="TestValues[0].Output" name="TestValues[0].Output" class="form-control m-input col m-1" placeholder="Выходные данные" autocomplete="off">
+                                <div class="input-group-append col-1">
+                                    <button id="removeRow" type="button" class="btn bgDanger m-1">Удалить</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div id="newRow"></div>
+                    <button id="addRow" type="button" class="btn bDarkGreen form-control">Добавить строку</button>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <hr/>
+        <div class="form-group">
+            <input type="submit" value="Обновить задачу" class="form-control btn-outline-info"/>
+        </div>
+        <br/>
+        <div class="form-group">
+            <a href="@Url.Action("DeleteTask", new {id = Model.Id})" class="form-control bgDanger text-center" role="button">Удалить задачу</a>
+        </div>
+        <br/>
+        <div class="form-group">
+            <a href="@Url.Action("AddSolution", new {taskId = Model.Id})" class="form-control btn-outline-primary text-decoration-none text-center" role="button">Добавить новое решение</a>
+        </div>
+        <br/>
+        <div id="dropArea">
+            Перетащите файлы и изображения для загрузки сюда
+        </div>
+        <br/>
+    </form>
+    <h3 class="m-3 text-center fw-bold">Вложенные изобжения и файлы</h3>
+    @if (Model.ImageIds.Any() && Model.ImageIds != null)
+    {
+        <br/>
+        <div class="text-left">
+            <h5 class="fw-bold">Вложенные изобажения</h5>
+        </div>
+        <div class="row justify-content-start mb-2">
+            @foreach (var imageId in Model.ImageIds)
+            {
+                <div class="col-4">
+                    <img src="@Url.Action("DownloadImage", new {id = imageId})" style=" cursor:pointer;"
+                         onclick="onClick(this)" class="img-thumbnail">
+                    <div class="form-group">
+                        <a href="@Url.Action("DeleteImage", new {id = imageId, taskId = Model.Id})" class="form-control bgDanger text-center" role="button">Удалить</a>
+                    </div>
+                </div>
+            }
+        </div>
+        <div id="modal01" class="w3-modal" onclick="this.style.display='none'">
+            <span class="w3-button w3-hover-red w3-xlarge w3-display-topright">&times;</span>
+            <div class="w3-modal-content w3-animate-zoom">
+                <img id="img01" style="width:100%">
+            </div>
+        </div>
+    }
+    @if (Model.NestedFiles.Any() && Model.NestedFiles != null)
+    {
+        <br/>
+        <div class="text-left">
+            <h5 class="fw-bold">Вложенные файлы для загрузки</h5>
+        </div>
+        <div class="list-group">
+            @foreach (var nestedFile in Model.NestedFiles)
+            {
+                <div class="list-group-item">
+                    <a class="nav-link active" href="@Url.Action("DownloadNestedFile", new {id = nestedFile.Id})">@nestedFile.FileNameWithExtension</a>
+                    <div class="form-group">
+                        <a href="@Url.Action("DeleteNestedFile", new {id = nestedFile.Id, taskId = Model.Id})" class="form-control bgDanger text-center" role="button">Удалить</a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    <br>
+</div>
+
+@section Styles
+{
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+        #dropArea {
+            background: #EEF6F7;
+            border: dashed 5px;
+            border-color: darkgray;
+            height: 300px;
+            text-align: center;
+            color: black;
+            font-size: large;
+            padding-top: 12px;
+            border-radius: 10px;           
+        }
+            .active-drop{
+                background:#77bafa !important;
+                border:solid 2px blue !important;
+                opacity:.5;
+                color:black !important;
+            }
+    </style>
+}
+
+@section Scripts
+{
+    <script>
+        $(function () {
+            $('#dropArea').filedrop({
+                fallback_id: 'upload_button',
+                fallback_dropzoneClick : true,
+                url: '@Url.Action("UploadFiles", new {id = Model.Id})',
+                paramname: 'files',
+                maxfiles: 10,
+                maxfilesize: 20,
+                dragOver: function () {
+                    $('#dropArea').addClass('active-drop');
+                },
+                dragLeave: function () {
+                    $('#dropArea').removeClass('active-drop');
+                },
+                drop: function () {
+                    $('#dropArea').removeClass('active-drop');
+                },
+                afterAll: function (e) {
+                    $('#dropArea').html('Файл(ы) успешно загруженны. Перезагрузите страницу');
+                }
+            })
+        })
+
+        function onClick(element) {
+            document.getElementById("img01").src = element.src;
+            document.getElementById("modal01").style.display = "block";
+        }
+
+        $(document).ready(function () {
+
+            $("#TopicName").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '@Url.Action("GetTopicNamesLikeQuery")',
+                        data: { "request": request.term },
+                        dataType: "json",
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return item;
+                            }))
+                        }
+                    });
+                },
+                minLength: 2
+            });
+        });
+    </script>
+}

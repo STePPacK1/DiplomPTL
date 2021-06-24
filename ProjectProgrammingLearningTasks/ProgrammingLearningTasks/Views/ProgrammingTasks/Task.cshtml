@@ -1,0 +1,178 @@
+﻿@model ProgrammingLearningTasks.Models.ProgrammingTasks.TaskViewModel
+
+<div class="container bg-light p-2 border rounded-3">
+    <div class="text-center">
+        <h3>@Model.Id - @Model.Name</h3>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col text-start">
+            <span>@Model.Author</span>
+        </div>
+        <div class="col text-center">
+            <span>Сложность - @Model.Complexity</span>
+        </div>
+        <div class="col text-end">
+            <span>@Model.CreationDate</span>
+        </div>
+    </div>
+    <hr/>
+    <br/>
+    <div class="text-left">
+        <h5 class="fw-bold">Задача</h5>
+    </div>
+    <div>
+        <div class="mt-2">
+            <textarea id="TextContent" class="form-control" disabled>
+                @Model.Text
+            </textarea>
+        </div>
+    </div>
+
+    @if (Model.InputDataText != null)
+    {
+        <br/>
+        <div class="text-left">
+            <h5 class="fw-bold">Входные данные</h5>
+            <textarea id="InputDataTextContent" class="form-control" disabled>
+                @Model.InputDataText
+            </textarea>
+        </div>
+    }
+    @if (Model.OutputDataText != null)
+    {
+        <br/>
+        <div class="text-left">
+            <h5 class="fw-bold">Выходные данные</h5>
+            <textarea id="OutputDataTextContent" class="form-control" disabled>
+                @Model.OutputDataText
+            </textarea>
+        </div>
+    }
+    @if (Model.Comment != null)
+    {
+        <br/>
+        <div class="text-left">
+            <h5 class="fw-bold">Комментарий</h5>
+            <p id="Comment">
+                @Model.Comment
+            </p>
+        </div>
+    }
+    @if (Model.TestValues.Any())
+    {
+        <br/>
+        <div class="text-left">
+            <h5 class="fw-bold">Пример</h5>
+            <table class="table">
+                <tr>
+                    <th>INPUT.TXT</th>
+                    <th>OUTPUT.TXT</th>
+                </tr>
+                @foreach (var testValue in Model.TestValues)
+                {
+                    <tr>
+                        <td>
+                            @testValue.Input
+                        </td>
+                        <td>
+                            @testValue.Output
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+
+    @if (Model.ImageIds.Any() && Model.ImageIds != null)
+    {
+        <br/>
+        <div class="text-left">
+            <h5 class="fw-bold">Вложенные изобажения</h5>
+        </div>
+        <div class="row justify-content-start">
+            @foreach (var imageId in Model.ImageIds)
+            {
+                <div class="col-2">
+                    <img src="@Url.Action("DownloadImage", "ProgrammingTasks", new {id = imageId})" style=" cursor:pointer;"
+                         onclick="onClick(this)" class="img-thumbnail">
+                </div>
+            }
+        </div>
+        <div id="modal01" class="w3-modal" onclick="this.style.display='none'">
+            <span class="w3-button w3-hover-red w3-xlarge w3-display-topright">&times;</span>
+            <div class="w3-modal-content w3-animate-zoom">
+                <img id="img01" style="width:100%">
+            </div>
+        </div>
+    }
+    @if (Model.NestedFiles.Any() && Model.NestedFiles != null)
+    {
+        <br/>
+        <div class="text-left">
+            <h5 class="fw-bold">Вложенные файлы для загрузки</h5>
+        </div>
+        <div class="list-group">
+            @foreach (var nestedFile in Model.NestedFiles)
+            {
+                <div class="list-group-item">
+                    <a class="nav-link active" href="@Url.Action("DownloadNestedFile", new {id = nestedFile.Id})">@nestedFile.FileNameWithExtension</a>
+                </div>
+            }
+        </div>
+    }
+    <br/>
+    <a href="@Url.Action("DownloadDocxReport", new {taskId = Model.Id})" class="btn btn-primary mb-3 form-control" role="button">Скачать задачу в формате docx</a>
+    @if (Model.HasSolutions)
+    {
+        <br/>
+        <a href="@Url.Action("Solutions", new {taskId = Model.Id})" class="btn mb-3 form-control bg-myHeaderBg" role="button">Перейти к решениям</a>
+    }
+    @if (User.Identity.IsAuthenticated)
+    {
+        <br/>
+        <a href="@Url.Action("EditTask", new {id = Model.Id})" class="btn btn-outline-primary mb-3 form-control" role="button">Изменить/Дополнить задачу</a>
+    }
+</div>
+
+@section Styles
+{
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+}
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            let text = $('#Comment').text();
+            let newText = linkify(text);
+            $('#Comment').html(newText);
+            
+            autoResizeTextArea('TextContent');
+            autoResizeTextArea('OutputDataTextContent');
+            autoResizeTextArea('InputDataTextContent');
+            
+            function autoResizeTextArea(id) {
+                let textContentElem = document.getElementById(id);
+                textContentElem.style.height = "1px";
+                textContentElem.style.height = (5+textContentElem.scrollHeight)+"px";
+                textContentElem.style.resize = "none";
+                textContentElem.style.backgroundColor = "#f8f9fa";
+                textContentElem.style.border = 0;
+            }
+            
+            function linkify(text) {
+                let urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@@#\/%?=~_|!:,.;]*[-A-Z0-9+&@@#\/%=~_|])/ig;
+                return text.replace(urlRegex, function (url) {
+                    return '<a href="' + url + '">' + url + '</a>';
+                });           
+            }
+        });
+    
+        function onClick(element) {
+            document.getElementById("img01").src = element.src;
+            document.getElementById("modal01").style.display = "block";
+        }
+        
+    </script>
+}

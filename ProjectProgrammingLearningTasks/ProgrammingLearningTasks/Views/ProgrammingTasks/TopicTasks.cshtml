@@ -1,0 +1,26 @@
+﻿@model ProgrammingLearningTasks.Models.ProgrammingTasks.TopicTaskIdModel
+
+<div class="bg-light p-2 border rounded-3">
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="row">
+            <a href="@Url.Action("DeleteTopic", new { id = Model.Id })" class="btn bgDanger m-2 col" role="button">Удалить тему</a>
+            <a href="@Url.Action("AddTask", new { topicId = Model.Id })" class="btn bg-myHeaderBg m-2 col" role="button">Создать задачу</a>
+        </div>
+    }
+    <hr />
+    <h4>Список задач</h4>
+    <hr />
+    <table id="tasksTable" class="display">
+        <thead>
+            <tr>
+                <th>Номер задачи</th>
+                <th>Название</th>
+                <th>Автор</th>
+                <th>Сложность</th>
+                <th>Дата создания</th>
+                <th>Ссылка на задачу</th>
+            </tr>
+        </thead>
+    </table>
+</div>

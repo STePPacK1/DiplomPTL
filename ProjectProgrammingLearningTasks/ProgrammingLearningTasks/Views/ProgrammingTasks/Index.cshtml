@@ -1,0 +1,88 @@
+﻿@section Styles
+{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css"/>
+}
+
+@section Scripts
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('#topicTree').jstree({
+            "core": {
+                 "themes": {
+                 "variant": "large",
+                 "icons": false
+             },
+             "data": @Html.Raw(ViewBag.JsonTreeData)
+             }
+        })
+        .bind("select_node.jstree", function (e, data) {
+            $('#topicTree').jstree('save_state');
+           }) 
+        .on("activate_node.jstree", function(e,data){
+            let node = data.node;
+            $.ajax({
+                url: node.a_attr.href,
+                data: { },
+                type: "GET",
+                success: function(data) {
+                    $('#placeHolderDiv').html(data);
+                    fillTable(node.id);
+                }
+            });
+        });
+
+        function fillTable(topicId)
+        {
+            Datatables = $("#tasksTable").DataTable({
+                "ajax": {
+                    "type": "GET",
+                    "url": "/ProgrammingTasks/GetTopicTasks/" + topicId,
+                    "datatype": "JSON",
+                },
+                "columns": [
+                    { "data": "id" },
+                    { "data": "name" },
+                    { "data": "author" },
+                    { "data": "complexity", "searchable": false },
+                    { "data": "creationDate", "searchable": false },
+                    {
+                        "data": "id", 
+                        "render": function (data) {
+                            return "<a href='/ProgrammingTasks/Task/" + data + "'  >Перейти к задаче</a>";
+                        },
+                        "orderable": false,
+                    }
+                ],
+                "language":{
+                    "processing": "Подождите...",
+                    "search": "Поиск:",
+                    "lengthMenu": "Показать _MENU_ записей",
+                    "info": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                    "infoEmpty": "Записи с 0 до 0 из 0 записей",
+                    "infoFiltered": "(отфильтровано из _MAX_ записей)",
+                    "infoPostFix": "",
+                    "loadingRecords": "Загрузка задач...",
+                    "zeroRecords": "Задачи отсутствуют.",
+                    "emptyTable": "Задачи не найдены",
+                    "paginate": {
+                        "first": "Первая",
+                        "previous": "Предыдущая",
+                        "next": "Следующая",
+                        "last": "Последняя"
+                    },
+                    "aria": {
+                        "sortAscending": ": Cортировка столбца по возрастанию",
+                        "sortDescending": ": Cортировка столбца по убыванию"
+                    }
+                },
+            });
+        }
+    });
+    </script>
+}
+
+<div class="container-fluid">
+    @await Html.PartialAsync("_TaskDynamicPage")
+</div>

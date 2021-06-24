@@ -1,0 +1,50 @@
+﻿@model ProgrammingLearningTasks.Models.ProgrammingTasks.AddTopicViewModel
+
+
+<div class="container bg-light p-2 border rounded-3">
+    <div class="text-center">
+        <h3>Создать новую тему</h3>
+    </div>
+    <form asp-action="AddTopic">
+        <div class="form-group">
+            <h5 class="fw-bold">Название</h5>
+            <input type="text" asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <br/>
+        <div class="form-group">
+             <h5 class="fw-bold">Укажите родительскую тему при необходимости</h5>
+            <input type="text" asp-for="ParentName" class="form-control"/>
+        </div>
+        <br/>
+        <div class="form-group">
+            <input type="submit" value="Добавить" class="form-control bg-myHeaderBg"/>
+        </div>
+    </form>
+</div>
+
+
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+
+            $("#ParentName").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '@Url.Action("GetTopicNamesLikeQuery")',
+                        data: { "request": request.term },                
+                        dataType: "json",
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return item;
+                            }))
+                        }
+                    });
+                },
+                minLength: 2
+            });
+        });
+    </script>
+}
